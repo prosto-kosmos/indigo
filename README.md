@@ -1,59 +1,191 @@
 # Indigo
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
+Интерактивный дашборд для управления проектами, построенный на Angular 20 с использованием современных подходов к разработке.
 
-## Development server
+# Демо
 
-To start a local development server, run:
+https://indigo-lyart.vercel.app/
 
-```bash
-ng serve
+## Архитектура
+
+Проект следует компонентной архитектуре с разделением на несколько ключевых слоев:
+
+### Структура приложения
+
+- **Компоненты** (`src/app/components/`)
+  - `dashboard/` - главный компонент дашборда с функционалом drag & drop
+  - `widgets/project-widget/` - переиспользуемый виджет для отображения проекта
+
+- **Сервисы** (`src/app/services/`)
+  - `dashboard.service.ts` - управление состоянием дашборда через HTTP API
+  - `project.service.ts` - загрузка данных о проектах
+
+- **Интерфейсы** (`src/app/interfaces/`)
+  - Типизация данных через TypeScript интерфейсы (`DashboardItem`, `Project`)
+
+- **Перехватчики** (`src/app/interceptors/`)
+  - `mock.interceptor.ts` - мокирование HTTP запросов для разработки без бэкенда
+
+- **Моки** (`src/app/mocks/`)
+  - Тестовые данные для разработки и демонстрации
+
+### Ключевые технологии
+
+- **Angular 20** с standalone компонентами
+- **Signals API** для реактивного управления состоянием
+- **PrimeNG** для UI компонентов (SplitButton, InputText, ProgressSpinner, Knob)
+- **Angular CDK** для drag & drop функциональности
+- **RxJS** для работы с асинхронными операциями
+- **TypeScript** со строгой типизацией
+
+## Принятые решения
+
+### 1. Использование Signals вместо Observable
+
+**Решение:** Применение Angular Signals API для управления локальным состоянием компонентов.
+
+**Обоснование:**
+- Более простой и понятный синтаксис
+- Автоматическое отслеживание зависимостей в computed signals
+- Лучшая производительность за счет гранулярного обновления
+- Современный подход, рекомендованный Angular командой
+
+**Пример:**
+```typescript
+readonly dashboard = signal<DashboardItem[]>([]);
+readonly filteredDashboard = computed(() => {
+  // Автоматически пересчитывается при изменении dashboard или searchValue
+  return this.dashboard().filter(/* ... */);
+});
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 2. OnPush Change Detection Strategy
 
-## Code scaffolding
+**Решение:** Использование `ChangeDetectionStrategy.OnPush` для всех компонентов.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+**Обоснование:**
+- Значительное повышение производительности приложения
+- Предсказуемое поведение обновлений UI
+- Работает идеально в сочетании с signals и async pipe
 
-```bash
-ng generate component component-name
+### 3. Zoneless Change Detection
+
+**Решение:** Использование `provideZonelessChangeDetection()` в конфигурации приложения.
+
+**Обоснование:**
+- Экспериментальная функция Angular 20 для дальнейшего повышения производительности
+- Отказ от Zone.js уменьшает размер бандла
+- Signals автоматически триггерят обновления
+
+### 4. Standalone Components
+
+**Решение:** Все компоненты реализованы как standalone.
+
+**Обоснование:**
+- Упрощенная структура без NgModules
+- Лучшее tree-shaking и оптимизация бандла
+- Более явное управление зависимостями через imports
+
+### 5. Mock Interceptor для разработки
+
+**Решение:** HTTP Interceptor для мокирования API запросов.
+
+**Обоснование:**
+- Независимая разработка фронтенда без необходимости в бэкенде
+- Сохранение состояния дашборда в localStorage для демонстрации
+- Легкое переключение между mock и реальным API через флаг `isMock`
+
+### 6. Widget-based архитектура
+
+**Решение:** Разделение на виджеты (`project-widget`) для расширяемости.
+
+**Обоснование:**
+- Легкое добавление новых типов виджетов в дашборд
+- Переиспользование компонентов
+- Модульная структура для масштабирования
+
+### 7. TypeScript интерфейсы для типизации
+
+**Решение:** Строгая типизация всех данных через интерфейсы.
+
+**Обоснование:**
+- Защита от ошибок на этапе компиляции
+- Лучшая поддержка IDE (автодополнение, рефакторинг)
+- Самодокументируемый код
+
+### 8. PrimeNG для UI компонентов
+
+**Решение:** Использование библиотеки PrimeNG с темой Aura.
+
+**Обоснование:**
+- Богатый набор готовых компонентов
+- Единообразный дизайн из коробки
+- Поддержка темной темы
+- Активная поддержка сообщества
+
+### 9. @ngneat/until-destroy для управления подписками
+
+**Решение:** Автоматическая отписка от Observable при уничтожении компонента.
+
+**Обоснование:**
+- Предотвращение утечек памяти
+- Меньше boilerplate кода
+- Удобный декоратор `@UntilDestroy()`
+
+## Примеры использования AI
+
+### Генерация компонентов
+
+AI может помочь в создании новых компонентов с правильной структурой:
+
+```
+Создай виджет для отображения статистики задач со следующими требованиями:
+- Использовать signals для состояния
+- OnPush change detection
+- PrimeNG компонент Chart для визуализации
+- Интеграция с существующим ProjectService
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Рефакторинг кода
 
-```bash
-ng generate --help
+AI может предложить улучшения существующего кода:
+
+```
+Проанализируй dashboard.component.ts и предложи оптимизации:
+- Можно ли заменить combineLatest на более эффективный подход?
+- Есть ли возможность упростить логику фильтрации?
+- Как улучшить обработку ошибок?
 ```
 
-## Building
+### Генерация тестовых данных
 
-To build the project run:
+AI может помочь создать моки данных:
 
-```bash
-ng build
+```
+Сгенерируй массив из 20 проектов с различными статусами выполнения,
+реалистичными датами и разным количеством задач
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Создание новых виджетов
 
-## Running unit tests
+AI может помочь расширить функциональность:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```
+Создай новый виджет для отображения временной шкалы проекта:
+- Использовать существующую архитектуру виджетов
+- Отображать даты начала и окончания
+- Показывать прогресс на временной шкале
+- Интегрировать с dashboard через DashboardType
 ```
 
-## Running end-to-end tests
+### Поиск и исправление багов
 
-For end-to-end (e2e) testing, run:
+AI может помочь в отладке:
 
-```bash
-ng e2e
+```
+Найди возможные проблемы в mock.interceptor.ts:
+- Корректно ли обрабатываются ошибки?
+- Правильно ли работает логика сохранения в localStorage?
+- Есть ли потенциальные race conditions?
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
