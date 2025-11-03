@@ -1,0 +1,63 @@
+<div class="dashboard-header">
+  <p-inputgroup>
+    <p-inputgroup-addon>
+      @if (isDataLoading() || isUpdateLoading()) {
+        <p-progress-spinner animationDuration=".5s" style="width: 16px; height: 16px" />
+      } @else {
+        <i class="pi pi-search"></i>
+      }
+    </p-inputgroup-addon>
+    <input
+        pInputText
+        [value]="searchValue()"
+        (input)="onSearchInput($event)"
+        placeholder="Search"
+    />
+  </p-inputgroup>
+
+  @if (actions().length > 0) {
+    <p-splitbutton label="Add Widget" [model]="actions()" />
+  }
+</div>
+
+<div
+  cdkDropList
+  cdkDropListOrientation="mixed"
+  class="dashboard-cards"
+  (cdkDropListDropped)="dropItem($event)"
+>
+  @if (isDataLoading()) {
+    <div class="empty-state">
+      <p-progress-spinner strokeWidth="4" animationDuration=".5s" />
+    </div>
+  } @else if (dashboard().length === 0) {
+    <div class="empty-state">
+      {{ 'Widgets not selected' | titlecase }}
+    </div>
+  } @else if (filteredDashboard().length === 0) {
+    <div class="empty-state">
+      {{ 'Widgets not found' | titlecase }} ({{ searchValue() }})
+    </div>
+  } @else {
+    @for (dashboardItem of filteredDashboard(); track dashboardItem.itemId) {
+      <div cdkDrag class="dashboard-card">
+        <div class="dashboard-card-header">
+          <p-button
+            icon="pi pi-times"
+            size="small"
+            [rounded]="true"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="removeItem(dashboardItem.itemId)"
+          />
+        </div>
+        @switch (dashboardItem.type) {
+          @case ('project') {
+            <app-project-widget [project]="getProjectById(dashboardItem.itemId)!" />
+          }
+          <!-- Add other widget types here -->
+        }
+      </div>
+    }
+  }
+</div>

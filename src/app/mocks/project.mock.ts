@@ -1,0 +1,68 @@
+import { Project } from '../interfaces/project.interface';
+
+export const PROJECTS_MOCK: Project[] = [
+  {
+    id: 1,
+    name: 'Project A',
+    tasksCompleted: 25,
+    tasksTotal: 50,
+    startDate: '2024-01-01',
+    endDate: '2024-12-31',
+  },
+  {
+    id: 2,
+    name: 'Project B',
+    tasksCompleted: 75,
+    tasksTotal: 140,
+    startDate: '2023-06-01',
+    endDate: '2024-03-31',
+  },
+  {
+    id: 3,
+    name: 'Project C',
+    tasksCompleted: 80,
+    tasksTotal: 85,
+    startDate: '2024-06-01',
+    endDate: '2024-09-30',
+  },
+  {
+    id: 4,
+    name: 'Project D',
+    tasksCompleted: 90,
+    tasksTotal: 90,
+    startDate: '2024-07-01',
+    endDate: '2024-10-30',
+  },
+  {
+    id: 5,
+    name: 'Project E',
+    tasksCompleted: 0,
+    tasksTotal: 100,
+    startDate: '2024-08-01',
+    endDate: '2024-11-30',
+  },
+  {
+    id: 6,
+    name: 'Project F',
+    tasksCompleted: 25,
+    tasksTotal: 50,
+    startDate: '2024-09-01',
+    endDate: '2024-12-30',
+  },
+  {
+    id: 7,
+    name: 'Project G',
+    tasksCompleted: 75,
+    tasksTotal: 100,
+    startDate: '2024-11-01',
+    endDate: '2024-12-30',
+  },
+  {
+    id: 8,
+    name: 'Project H',
+    tasksCompleted: 10,
+    tasksTotal: 40,
+    startDate: '2024-12-01',
+    endDate: '2025-01-30',
+  },
+];

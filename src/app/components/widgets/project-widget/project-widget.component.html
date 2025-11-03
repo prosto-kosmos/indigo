@@ -1,0 +1,12 @@
+<div class="widget">
+  <div class="header">
+    <div class="title">{{ project().name }}</div>
+    <div class="dates">
+      {{ project().startDate | date: 'dd.MM.yyyy' }} - {{ project().endDate | date: 'dd.MM.yyyy' }}
+    </div>
+  </div>
+  <p-knob class="progress" [ngModel]="progress()" [size]="150" [readonly]="true" valueTemplate="{value}%" />
+  <div class="footer">
+    Tasks completed: {{ project().tasksCompleted }} / {{ project().tasksTotal }}
+  </div>
+</div>
